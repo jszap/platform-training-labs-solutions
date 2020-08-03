@@ -3,21 +3,19 @@
 
 `build.sh`
 
+# To run batch word count Demo:
 
-# Streaming Demo
+`runWordCountBatchJob.sh`
 
-`runTextMessageSimulator.sh` 
+Does a word count from the books in the resources directory.
+
+# Streaming word count Demo:
+
+`runRTMessageInputConsole.sh` 
 
 You can enter any words at the prompt.
 
 In another terminal window :
-`runWordCountStream.sh`
+`runWordCountStreamJob.sh`
 
 You should see the words counted on the screen now.
-
-
-# To run wordcount:
-
-`runWordCount.sh`
-
-Does a word count from the books in the resources directory.
