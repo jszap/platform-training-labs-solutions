@@ -21,16 +21,16 @@ public class CloudMapClient {
 		}
 	}
 	
-	public void putEntriesInToMap(){
+	public void putEntriesIntoCloudMap(){
 		try {
 			
-			IMap<String,String> map=instance.getMap("TrainingMap");
+			IMap<String,String> trainingMap =instance.getMap("TrainingMap");
 			int i=0;
 			 while(true){
 				System.out.println("Adding Entry "+ (++i));
 				//TODO: Extra credit -- what is the difference between put and set?
 		        //String OldValue = map.put(Integer.toString(i),Double.toString(Math.random()));
-		        map.set(Integer.toString(i),Double.toString(Math.random()));
+				trainingMap.set(Integer.toString(i),Double.toString(Math.random()));
 				Thread.sleep(500);
 			}
 		} catch (Exception e) {
@@ -40,6 +40,6 @@ public class CloudMapClient {
 	
 	public static void main(String[] args) {
 		CloudMapClient cloudMapClient = new CloudMapClient();
-		cloudMapClient.putEntriesInToMap();
+		cloudMapClient.putEntriesIntoCloudMap();
 	}
  }

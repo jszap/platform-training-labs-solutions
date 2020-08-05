@@ -20,6 +20,7 @@ public class MapClient {
 	HazelcastInstance instance;
 	
 	public MapClient() throws FileNotFoundException{
+
 		//TODO: Create a Hazelcast client instance to the the running 'PRIMARY' cluster
 		ClientConfig clientConfig = new ClientConfig();
 		clientConfig.setClusterName("PRIMARY");
@@ -28,7 +29,7 @@ public class MapClient {
 
 		Thread mapWriterThread = new Thread(new Runnable(){
 			public void run(){
-				processInput();
+				doMapPuts();
 			}
 		}); 
 		
@@ -36,20 +37,24 @@ public class MapClient {
 		
 	}
 	
-	private void processInput(){
+	private void doMapPuts(){
 		try {
 			
-			IMap<Object, Object> map=instance.getMap("TrainnigMap");
+			//TODO: Get a reference handle to the distribute map
+			IMap<Object,Object> trainnigMap = instance.getMap("TrainnigMap");
+
 			Random randInt = new Random();
-			Integer.toString(randInt.nextInt(10000));
-			
 			 while(true){
+
 				String key = "key"+Integer.toString(randInt.nextInt(10000));
+				String value = Double.toString(Math.random());
 				System.out.println("Adding Entry key: "+ key);
-		        //String OldValue = map.put(key,Double.toString(Math.random()));
-		        map.set(key,Double.toString(Math.random()));
+
+				//TODO: Put entry into the map				
+				trainnigMap.set(key,value);
+		        //String OldValue = trainnigMap.put(key,value);
 		        
-		        getMapEntryCount(map);
+		        getMapEntryCount(trainnigMap);
 		        
 				Thread.sleep(500);
 			}
