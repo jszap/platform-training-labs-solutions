@@ -28,7 +28,7 @@ public class Utils {
 	        props.setProperty("javax.net.ssl.trustStorePassword", "daabf90539d");
 
 	        cloudClientConfig = new ClientConfig();
-	        cloudClientConfig.setInstanceName("TrainingCloudClinet"); //Give your clients a name eg. MicroService_XYZ_v1
+	        cloudClientConfig.setInstanceName("TrainingCloudClient"); //Give your clients a name e.g. MicroService_XYZ_v1
 
 	        cloudClientConfig.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(props));
 
