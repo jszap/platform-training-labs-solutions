@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.hazelcast.collection.IQueue;
+import com.hazelcast.core.HazelcastInstance;
 
 /*
  * Copyright (c) 2008-2020, Hazelcast, Inc. All Rights Reserved.
@@ -50,6 +51,10 @@ public class WordCountStream {
 	private static final String STREAM_COUNTS = "streamCounts";
 
 	private JetInstance jet;
+    
+	// Create a client to the remote IMDG Cluster 
+	private static HazelcastInstance imdgClientInstance = Utils
+			.remoteHazelcastInstance(Utils.clientConfigForExternalHazelcast("WordCountStreamingJob"));
 
 	private static Pipeline buildPipeline() {
 
@@ -58,7 +63,7 @@ public class WordCountStream {
 
 		// Initial a Hazelcast distributed IQueue as custom streaming source
 		StreamSource<String> queueSource = SourceBuilder.stream("TrainingSourceQueue",
-				context -> new QueueContext<>(Utils.remoteHazelcastInstance(Utils.clientConfigForExternalHazelcast())
+				context -> new QueueContext<>(imdgClientInstance
 						.<String>getQueue("TrainingSourceQueue")))
 				.<String>fillBufferFn(QueueContext::fillBuffer).build();
 		
@@ -68,7 +73,7 @@ public class WordCountStream {
 				// .window(WindowDefinition.tumbling(15_000))
 				.aggregate(counting())
 				// .writeTo(Sinks.map(STREAM_COUNTS)); // Shows usage for a local jet cluster map vs. remote
-				.writeTo(Sinks.remoteMap(STREAM_COUNTS, Utils.clientConfigForExternalHazelcast())); // remote Map
+				.writeTo(Sinks.remoteMap(STREAM_COUNTS, Utils.clientConfigForExternalHazelcast("WordCountStreamingSink"))); // remote Map
 		return p;
 	}
 
@@ -80,7 +85,9 @@ public class WordCountStream {
 		try {
 			
             //TODO: Get the jet instance and create a new job name 'WordCountStreaming'.  
-			jet = Jet.bootstrappedInstance();
+			//jet = Jet.bootstrappedInstance();
+			jet =  Jet.newJetInstance();
+			
 			Pipeline p = buildPipeline();
 			JobConfig jobConfig = new JobConfig();
 			jobConfig.setName("WordCountStreaming");
@@ -104,11 +111,10 @@ public class WordCountStream {
 			e.printStackTrace();
 		}
 	}
-
+    
 	private void printResults() {
 		final int limit = 100;
-		Map<String, Long> streamCountResultsMap = Utils
-				.remoteHazelcastInstance(Utils.clientConfigForExternalHazelcast()).getMap(STREAM_COUNTS);
+		Map<String, Long> streamCountResultsMap = imdgClientInstance.getMap(STREAM_COUNTS);
 		System.out.println("==== Printing results ");
 		StringBuilder sb = new StringBuilder(String.format(" Top %d entries are:%n", limit));
 		sb.append("/-------+---------\\\n");

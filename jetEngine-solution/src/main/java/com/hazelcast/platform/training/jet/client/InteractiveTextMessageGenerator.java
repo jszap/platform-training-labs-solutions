@@ -12,7 +12,7 @@ import com.hazelcast.core.HazelcastInstance;
 public class InteractiveTextMessageGenerator {
 	HazelcastInstance instance;
 	public InteractiveTextMessageGenerator(){
-		 instance = HazelcastClient.newHazelcastClient(Utils.clientConfigForExternalHazelcast());
+		 instance = HazelcastClient.newHazelcastClient(Utils.clientConfigForExternalHazelcast("InteractiveTextMessageGenerator"));
 		Thread producer = new Thread(new Runnable(){
 			public void run(){
 				processInput();
